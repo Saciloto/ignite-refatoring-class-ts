@@ -3,19 +3,26 @@ import {
   useRef,
   useState,
   useCallback,
+  ForwardRefRenderFunction,
+  forwardRef,
 } from 'react';
-
 import { useField } from '@unform/core';
-
 import { Container } from './styles';
+import { IconType } from 'react-icons';
 
-const Input = ({ name, icon: Icon, ...rest }) => {
+type InputProps = {
+  name: string
+  Icon?: IconType
+  placeholder: string
+}
+
+const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = ({ name, Icon, ...rest }, ref) => {
   const inputRef = useRef(null);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const { fieldName, defaultValue, registerField } = useField(name);
+  const { fieldName, defaultValue = "", registerField } = useField(name);
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -24,7 +31,7 @@ const Input = ({ name, icon: Icon, ...rest }) => {
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);
 
-    setIsFilled(!!inputRef.current?.value);
+    setIsFilled(!!inputRef.current);
   }, []);
 
   useEffect(() => {
@@ -50,4 +57,4 @@ const Input = ({ name, icon: Icon, ...rest }) => {
   );
 };
 
-export default Input;
+export const Input = forwardRef(InputBase);
